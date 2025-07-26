@@ -1,0 +1,20 @@
+{
+  "name": "datafetch",
+  "version": "1.0.0",
+  "description": "<!-- <!DOCTYPE html>\r <html>\r <head>\r   <title>Live Google Sheet Data</title>\r   <style>\r     body {\r       font-family: Arial;\r       padding: 20px;\r     }\r     .box {\r       padding: 15px;\r       border: 1px solid #ccc;\r       margin-top: 20px;\r       width: fit-content;\r     }\r   </style>\r </head>\r <body>\r   <h2>🟢 Live Google Sheet Data</h2>\r   <div class=\"box\" id=\"dataBox\">Loading...</div>",
+  "main": "fetc-Sheet.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "fs": "^0.0.1-security",
+    "googleapis": "^154.0.0"
+  }
+}

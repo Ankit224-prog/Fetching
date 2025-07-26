@@ -1,0 +1,138 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Live Google Sheet Data</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+    .box {
+      padding: 15px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+  <h2>🟢 Live Google Sheet Data</h2>
+  <div class="box" id="dataBox">Loading...</div>
+
+  <script>
+    async function fetchData() {
+      try {
+        const res = await fetch('/data');
+        if (!res.ok) throw new Error("Fetch failed");
+        const data = await res.json();
+
+        let html = "";
+        for (let key in data) {
+          html += `<b>${key}:</b> ${data[key]}<br>`;
+        }
+
+        document.getElementById('dataBox').innerHTML = html;
+      } catch (err) {
+        document.getElementById('dataBox').innerHTML = "❌ Error fetching data.";
+        console.error(err);
+      }
+    }
+
+    // Initial fetch
+    fetchData();
+
+    // Auto refresh every 5 seconds
+    setInterval(fetchData, 5000);
+  </script>
+</body>
+</html> -->
+
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Google Sheet Cell Viewer & Editor</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, button { margin: 5px; padding: 8px; }
+    #status { margin-top: 10px; color: green; }
+  </style>
+</head>
+<body>
+  <h2>📄 Google Sheet Cell Viewer & Editor</h2>
+
+  <input id="cellInput" placeholder="Enter cell (e.g., A1)" />
+  <br><br>
+
+  <label>Cell Value:</label><br>
+  <input id="cellValue" placeholder="Cell value will appear here..." />
+  <br>
+  <button onclick="updateCell()">Update</button>
+
+  <p id="status"></p>
+
+  <script>
+    let lastValue = '';
+    let currentCell = '';
+
+    // 👇 Auto-fetch when cellInput changes
+    document.getElementById('cellInput').addEventListener('input', async function () {
+      currentCell = this.value.trim().toUpperCase();
+      if (!currentCell) return;
+      fetchCell(currentCell);
+    });
+
+    // ✅ Fetch function
+    async function fetchCell(cell) {
+      try {
+        const res = await fetch(`/getCell?cell=${cell}`);
+        const data = await res.json();
+        lastValue = data.value || '';
+        document.getElementById('cellValue').value = lastValue;
+        document.getElementById('status').innerText = '';
+      } catch (err) {
+        console.error('❌ Fetch error:', err);
+        document.getElementById('cellValue').value = '';
+      }
+    }
+
+    // ✅ Update cell value
+    async function updateCell() {
+      const cell = document.getElementById('cellInput').value.trim().toUpperCase();
+      const value = document.getElementById('cellValue').value;
+
+      try {
+        const res = await fetch('/updateCell', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cell, value })
+        });
+        const data = await res.json();
+        document.getElementById('status').innerText = data.message || '✅ Updated!';
+        lastValue = value;
+      } catch (err) {
+        console.error('❌ Update error:', err);
+        document.getElementById('status').innerText = '❌ Failed to update';
+      }
+    }
+
+    // 🔁 Polling every 3 seconds for live update
+    setInterval(async () => {
+      if (!currentCell) return;
+      try {
+        const res = await fetch(`/getCell?cell=${currentCell}`);
+        const data = await res.json();
+        const newValue = data.value || '';
+        if (newValue !== lastValue) {
+          document.getElementById('cellValue').value = newValue;
+          lastValue = newValue;
+          document.getElementById('status').innerText = '🔄 Auto Updated!';
+        }
+      } catch (e) {
+        console.error('Polling error:', e);
+      }
+    }, 3000); // 3 seconds
+  </script>
+</body>
+</html>
