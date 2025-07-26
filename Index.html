@@ -48,7 +48,7 @@
 </html> -->
 
 
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -73,29 +73,20 @@
   <p id="status"></p>
 
   <script>
-    let lastValue = '';
-    let currentCell = '';
-
     // 👇 Auto-fetch when cellInput changes
     document.getElementById('cellInput').addEventListener('input', async function () {
-      currentCell = this.value.trim().toUpperCase();
-      if (!currentCell) return;
-      fetchCell(currentCell);
-    });
+      const cell = this.value.trim().toUpperCase();
+      if (!cell) return;
 
-    // ✅ Fetch function
-    async function fetchCell(cell) {
       try {
         const res = await fetch(`/getCell?cell=${cell}`);
         const data = await res.json();
-        lastValue = data.value || '';
-        document.getElementById('cellValue').value = lastValue;
-        document.getElementById('status').innerText = '';
+        document.getElementById('cellValue').value = data.value || '';
       } catch (err) {
         console.error('❌ Fetch error:', err);
         document.getElementById('cellValue').value = '';
       }
-    }
+    });
 
     // ✅ Update cell value
     async function updateCell() {
@@ -110,29 +101,11 @@
         });
         const data = await res.json();
         document.getElementById('status').innerText = data.message || '✅ Updated!';
-        lastValue = value;
       } catch (err) {
         console.error('❌ Update error:', err);
         document.getElementById('status').innerText = '❌ Failed to update';
       }
     }
-
-    // 🔁 Polling every 3 seconds for live update
-    setInterval(async () => {
-      if (!currentCell) return;
-      try {
-        const res = await fetch(`/getCell?cell=${currentCell}`);
-        const data = await res.json();
-        const newValue = data.value || '';
-        if (newValue !== lastValue) {
-          document.getElementById('cellValue').value = newValue;
-          lastValue = newValue;
-          document.getElementById('status').innerText = '🔄 Auto Updated!';
-        }
-      } catch (e) {
-        console.error('Polling error:', e);
-      }
-    }, 3000); // 3 seconds
   </script>
 </body>
 </html>

@@ -12,9 +12,18 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "fs": "^0.0.1-security",
     "googleapis": "^154.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ankit224-prog/Fetching.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ankit224-prog/Fetching/issues"
+  },
+  "homepage": "https://github.com/Ankit224-prog/Fetching#readme"
 }
